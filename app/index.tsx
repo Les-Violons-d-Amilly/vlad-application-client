@@ -1,15 +1,18 @@
-import { Text, View } from "react-native";
+import Navbar from "@/components/Navbar";
+import { View } from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
 
 export default function Index() {
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
+    <View>
+      <Navbar>
+        <Navbar.Tab icon={<FontAwesome name="home" />} label="Home" href="/" />
+        <Navbar.Tab
+          icon={<FontAwesome name="gamepad" />}
+          label="Game"
+          href="/_sitemap"
+        />
+      </Navbar>
     </View>
   );
 }
