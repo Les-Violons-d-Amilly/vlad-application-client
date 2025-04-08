@@ -4,7 +4,7 @@ import { FontAwesome } from "@expo/vector-icons";
 
 export default function Index() {
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <Navbar>
         <Navbar.Tab icon={<FontAwesome name="home" />} label="Home" href="/" />
         <Navbar.Tab
