@@ -8,6 +8,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import OutsidePressHandler from "react-native-outside-press";
+import { ScrollView } from "react-native-gesture-handler";
 
 type Item = {
   label: string;
@@ -122,18 +123,18 @@ export default function Selector(props: SelectorProps) {
             <FontAwesome name="caret-down" size={14} color="#666666" />
           </Animated.View>
         </RipplePressable>
-        <Animated.ScrollView
-          style={[styles.itemsContainer, itemsAnimatedStyle]}
-        >
-          {props.items.map((item, index) => (
-            <SelectorItem
-              key={index}
-              item={item}
-              style={styles.selectionItem}
-              onPress={() => select(index)}
-            />
-          ))}
-        </Animated.ScrollView>
+        <Animated.View style={[itemsAnimatedStyle, styles.itemsContainer]}>
+          <ScrollView>
+            {props.items.map((item, index) => (
+              <SelectorItem
+                key={index}
+                item={item}
+                style={styles.selectionItem}
+                onPress={() => select(index)}
+              />
+            ))}
+          </ScrollView>
+        </Animated.View>
       </View>
     </OutsidePressHandler>
   );
@@ -159,6 +160,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     overflow: "hidden",
     width: "100%",
+    maxHeight: 250,
+    zIndex: 999,
   },
   selectionItem: {
     padding: 12,
