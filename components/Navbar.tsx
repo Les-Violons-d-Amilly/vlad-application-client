@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from "react-native";
 import RipplePressable from "./RipplePressable";
 
 type NavbarProps = {
-  children: React.ReactElement[];
+  children: React.ReactElement | React.ReactElement[];
 };
 
 type TabProps = {
@@ -16,8 +16,8 @@ type TabProps = {
 function Navbar(props: NavbarProps) {
   return (
     <View style={styles.row}>
-      {props.children?.map((child, index) =>
-        React.cloneElement(child, { key: index })
+      {(Array.isArray(props.children) ? props.children : [props.children])?.map(
+        (child, index) => React.cloneElement(child, { key: index })
       )}
     </View>
   );

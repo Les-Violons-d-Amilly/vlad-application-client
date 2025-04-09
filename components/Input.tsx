@@ -1,13 +1,18 @@
 import { FontAwesome } from "@expo/vector-icons";
 import React, { useState } from "react";
-import { Pressable, StyleSheet, TextInput, TextInputProps } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  Pressable,
+  StyleSheet,
+  TextInput,
+  TextInputProps,
+  View,
+} from "react-native";
 
 export default function Input(props: TextInputProps) {
   const [visible, setVisible] = useState(false);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <TextInput
         {...props}
         style={[
@@ -28,7 +33,7 @@ export default function Input(props: TextInputProps) {
           />
         </Pressable>
       )}
-    </SafeAreaView>
+    </View>
   );
 }
 

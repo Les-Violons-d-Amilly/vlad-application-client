@@ -1,33 +1,41 @@
-import { Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
-import { AppMode, getAppMode } from "@/utils/getAppMode";
-import Navbar from "@/components/Navbar";
+import { StatusBar as StatusBarRN } from "react-native";
+import Selector from "@/components/Selector";
 import { FontAwesome } from "@expo/vector-icons";
+import { EventProvider as OutsideClickEventProvider } from "react-native-outside-press";
 
 export default function RootLayout() {
   return (
-    <GestureHandlerRootView>
-      <StatusBar style="dark" />
-      <Stack
-        screenOptions={{ headerShown: false }}
-        initialRouteName={getAppMode()}
+    <OutsideClickEventProvider style={{ flex: 1 }}>
+      <GestureHandlerRootView
+        style={{
+          flex: 1,
+          padding: 10,
+          paddingTop: StatusBarRN.currentHeight! + 10,
+        }}
       >
-        <Stack.Screen name="student" />
-        <Stack.Screen name="teacher" />
-      </Stack>
-      <Navbar>
-        <Navbar.Tab
-          icon={<FontAwesome name="user" />}
-          label="Student"
-          href="/student"
+        <StatusBar style="dark" />
+        <Selector
+          items={[
+            {
+              label: "Item 1",
+              value: "item1",
+              icon: <FontAwesome name="home" />,
+            },
+            {
+              label: "Item 2",
+              value: "item2",
+              icon: <FontAwesome name="user" />,
+            },
+            {
+              label: "Item 3",
+              value: "item3",
+              icon: <FontAwesome name="cog" />,
+            },
+          ]}
         />
-        <Navbar.Tab
-          icon={<FontAwesome name="user-secret" />}
-          label="Teacher"
-          href="/teacher"
-        />
-      </Navbar>
-    </GestureHandlerRootView>
+      </GestureHandlerRootView>
+    </OutsideClickEventProvider>
   );
 }
