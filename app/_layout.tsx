@@ -3,6 +3,7 @@ import { StatusBar as StatusBarRN, StyleSheet } from "react-native";
 import Selector from "@/components/Selector";
 import { FontAwesome } from "@expo/vector-icons";
 import RootProviders from "./_rootProviders";
+import { Slot } from "expo-router";
 
 export default function RootLayout() {
   return (
@@ -27,6 +28,7 @@ export default function RootLayout() {
           },
         ]}
       />
+      <Slot />
     </RootProviders>
   );
 }
