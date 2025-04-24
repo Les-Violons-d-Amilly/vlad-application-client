@@ -1,0 +1,19 @@
+{
+  "$schema": "./$theme.schema.json",
+  "id": "light",
+  "name": "Thème Clair",
+  "colors": {
+    "primary": "#3372d6",
+    "secondary": "#babcbe",
+    "success": "#28a745",
+    "danger": "#dc3545",
+    "warning": "#ffb007",
+    "backgroundPrimary": "#ffffff",
+    "backgroundSecondary": "#eeeeee",
+    "backgroundTertiary": "#dddddd",
+    "textPrimary": "#212529",
+    "textSecondary": "#6c757d",
+    "textTertiary": "#868e96",
+    "border": "#ced4da"
+  }
+}

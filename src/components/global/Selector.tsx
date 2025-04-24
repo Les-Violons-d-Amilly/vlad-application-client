@@ -16,75 +16,52 @@ type Item = {
   icon?: React.ReactElement;
 };
 
-type SelectorProps = {
+type SelectorProps = Readonly<{
   items: Item[];
   onSelect?: (item: Item) => void;
   selected?: Item;
   animationDuration?: number;
-};
+}>;
 
-type SelectorItemProps = {
+type SelectorItemProps = Readonly<{
   item: Item;
   onPress?: () => void;
   style?: StyleProp<ViewStyle>;
-};
+}>;
 
 const DEFAULT_DURATION = 150;
 
 function SelectorItem(props: SelectorItemProps) {
-  const icon = useCallback(() => {
-    if (!props.item.icon) return null;
-
-    return React.cloneElement(props.item.icon, {
-      color: "#666666",
-      size: 18,
-    });
-  }, [props.item.icon]);
-
   return (
     <RipplePressable style={styles.selectionItem} onPress={props.onPress}>
-      <View style={styles.iconContainer}>{icon()}</View>
+      <View style={styles.iconContainer}>
+        {props.item.icon &&
+          React.cloneElement(props.item.icon, {
+            color: "#666666",
+            size: 18,
+          })}
+      </View>
       <Text style={styles.itemText}>{props.item.label}</Text>
     </RipplePressable>
   );
 }
 
 export default function Selector(props: SelectorProps) {
-  const [selected, setSelected] = useState<Item>(props.items[0]);
+  const [selected, setSelected] = useState<Item>(
+    props.selected ?? props.items[0]
+  );
 
   const deployed = useSharedValue(false);
-  const itemsY = useSharedValue(-20);
-  const itemsOpacity = useSharedValue(0);
-  const itemPointerEvents = useSharedValue<"none" | "auto">("none");
-  const caretRotation = useSharedValue(0);
+  const animationValue = useSharedValue(0);
 
   if (!selected) return null;
-
-  const selectedIcon = useCallback(() => {
-    if (!selected.icon) return null;
-
-    return React.cloneElement(selected.icon, {
-      color: "#666666",
-      size: 18,
-    });
-  }, [selected.icon]);
 
   const toggleItems = () => {
     deployed.value = !deployed.value;
 
-    itemsY.value = withTiming(deployed.value ? -20 : 0, {
+    animationValue.value = withTiming(deployed.value ? 0 : 1, {
       duration: props.animationDuration ?? DEFAULT_DURATION,
     });
-
-    itemsOpacity.value = withTiming(deployed.value ? 0 : 1, {
-      duration: props.animationDuration ?? DEFAULT_DURATION,
-    });
-
-    caretRotation.value = withTiming(deployed.value ? 0 : 180, {
-      duration: props.animationDuration ?? DEFAULT_DURATION,
-    });
-
-    itemPointerEvents.value = deployed.value ? "none" : "auto";
   };
 
   const closeItems = () => {
@@ -93,23 +70,23 @@ export default function Selector(props: SelectorProps) {
   };
 
   const select = (index: number) => {
-    console.log("Selected item:", index);
     const item = props.items[index];
     setSelected(item);
     closeItems();
+    if (props.onSelect) props.onSelect(item);
   };
 
   const itemsAnimatedStyle = useAnimatedStyle(() => {
     return {
-      transform: [{ translateY: 50 + itemsY.value }],
-      opacity: itemsOpacity.value,
-      pointerEvents: itemPointerEvents.value,
+      transform: [{ translateY: 55 + (animationValue.value * 50 - 50) }],
+      opacity: animationValue.value,
+      pointerEvents: deployed.value ? "auto" : "none",
     };
   });
 
   const caretAnimatedStyle = useAnimatedStyle(() => {
     return {
-      transform: [{ rotateZ: `${caretRotation.value}deg` }],
+      transform: [{ rotateZ: `${animationValue.value * 180}deg` }],
     };
   });
 
@@ -117,7 +94,13 @@ export default function Selector(props: SelectorProps) {
     <OutsidePressHandler onOutsidePress={closeItems}>
       <View style={styles.selector}>
         <RipplePressable style={styles.selectedItem} onPress={toggleItems}>
-          <View style={styles.iconContainer}>{selectedIcon()}</View>
+          <View style={styles.iconContainer}>
+            {selected.icon &&
+              React.cloneElement(selected.icon, {
+                color: "#666666",
+                size: 18,
+              })}
+          </View>
           <Text style={styles.itemText}>{selected.label}</Text>
           <Animated.View style={[styles.caretContainer, caretAnimatedStyle]}>
             <FontAwesome name="caret-down" size={14} color="#666666" />
@@ -145,11 +128,14 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   selectedItem: {
-    padding: 12,
-    borderRadius: 5,
-    backgroundColor: "#f0f0f0",
+    paddingBlock: 12,
+    paddingInline: 14,
+    borderRadius: 10,
+    backgroundColor: "#ffffff",
     flexDirection: "row",
     alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#cccccc",
     gap: 8,
   },
   caretContainer: {
@@ -157,15 +143,17 @@ const styles = StyleSheet.create({
   },
   itemsContainer: {
     position: "absolute",
-    borderRadius: 5,
+    borderRadius: 10,
     overflow: "hidden",
     width: "100%",
     maxHeight: 250,
-    zIndex: 999,
+    borderWidth: 1,
+    backgroundColor: "#ffffff",
+    borderColor: "#cccccc",
   },
   selectionItem: {
-    padding: 12,
-    backgroundColor: "#f0f0f0",
+    paddingBlock: 12,
+    paddingInline: 14,
     flexDirection: "row",
     alignItems: "center",
     gap: 8,

@@ -1,0 +1,19 @@
+{
+  "$schema": "./$theme.schema.json",
+  "id": "dark",
+  "name": "Thème Sombre",
+  "colors": {
+    "primary": "#3372d6",
+    "secondary": "#4e4e4e",
+    "success": "#28a745",
+    "danger": "#dc3545",
+    "warning": "#ffb007",
+    "backgroundPrimary": "#302F30",
+    "backgroundSecondary": "#464444",
+    "backgroundTertiary": "#524F4F",
+    "textPrimary": "#ffffff",
+    "textSecondary": "#babcbe",
+    "textTertiary": "#7A7A7A",
+    "border": "#4e4e4e"
+  }
+}

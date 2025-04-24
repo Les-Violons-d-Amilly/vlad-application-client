@@ -1,0 +1,82 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Theme ID"
+    },
+    "name": {
+      "type": "string",
+      "description": "Theme name"
+    },
+    "colors": {
+      "type": "object",
+      "properties": {
+        "primary": {
+          "type": "string",
+          "description": "Primary color"
+        },
+        "secondary": {
+          "type": "string",
+          "description": "Secondary color"
+        },
+        "success": {
+          "type": "string",
+          "description": "Success color"
+        },
+        "danger": {
+          "type": "string",
+          "description": "Danger color"
+        },
+        "warning": {
+          "type": "string",
+          "description": "Warning color"
+        },
+        "backgroundPrimary": {
+          "type": "string",
+          "description": "Primary background color"
+        },
+        "backgroundSecondary": {
+          "type": "string",
+          "description": "Secondary background color"
+        },
+        "backgroundTertiary": {
+          "type": "string",
+          "description": "Tertiary background color"
+        },
+        "textPrimary": {
+          "type": "string",
+          "description": "Primary text color"
+        },
+        "textSecondary": {
+          "type": "string",
+          "description": "Secondary text color"
+        },
+        "textTertiary": {
+          "type": "string",
+          "description": "Tertiary text color"
+        },
+        "border": {
+          "type": "string",
+          "description": "Border color"
+        }
+      },
+      "required": [
+        "primary",
+        "secondary",
+        "success",
+        "danger",
+        "warning",
+        "backgroundPrimary",
+        "backgroundSecondary",
+        "backgroundTertiary",
+        "textPrimary",
+        "textSecondary",
+        "textTertiary",
+        "border"
+      ]
+    }
+  },
+  "required": ["id", "name", "colors"]
+}

@@ -1,9 +1,15 @@
-import React, { useCallback } from "react";
+import React, {
+  forwardRef,
+  RefObject,
+  useCallback,
+  useImperativeHandle,
+} from "react";
 import {
   PressableProps,
   StyleProp,
   StyleSheet,
   Vibration,
+  View,
   ViewStyle,
 } from "react-native";
 import Animated, {
@@ -15,13 +21,14 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { Href, router } from "expo-router";
 
-type RipplePressableProps = PressableProps & {
-  rippleDuration?: number;
-  rippleColor?: string;
-  onPress?: () => void;
-  onLongPress?: () => void;
-};
+type RipplePressableProps = Readonly<
+  Omit<PressableProps, "onPress"> & {
+    rippleDuration?: number;
+    rippleColor?: string;
+  } & ({ onPress?: () => void } | { href: Href })
+>;
 
 // Component constants
 const DEFAULT_DURATION = 500;
@@ -37,7 +44,17 @@ export default function RipplePressable(props: RipplePressableProps) {
   const rippleScale = useSharedValue(0);
   const rippleOpacity = useSharedValue(0);
 
-  const tapGesture = Gesture.Tap()
+  function onPress() {
+    if ("onPress" in props && props.onPress) {
+      props.onPress();
+    }
+
+    if ("href" in props && props.href) {
+      router.navigate(props.href);
+    }
+  }
+
+  const gesture = Gesture.Tap()
     .onBegin((e) => {
       const layout = measure(containerRef);
       if (!layout) return;
@@ -55,56 +72,12 @@ export default function RipplePressable(props: RipplePressableProps) {
       });
     })
     .onEnd(() => {
-      if (props.onPress) {
-        console.log("Tap detected");
-        runOnJS(props.onPress)();
-      }
-
+      runOnJS(onPress)();
       rippleOpacity.value = withTiming(0);
     })
     .onFinalize(() => {
       rippleOpacity.value = withTiming(0);
     });
-
-  const longPressGesture = Gesture.LongPress()
-    .minDuration(500)
-    .onStart((e) => {
-      const layout = measure(containerRef);
-      if (!layout) return;
-
-      width.value = layout.width;
-      height.value = layout.height;
-
-      centerX.value = e.x;
-      centerY.value = e.y;
-
-      rippleOpacity.value = 1;
-      rippleScale.value = 0;
-      rippleScale.value = withTiming(1, {
-        duration: props.rippleDuration ?? DEFAULT_DURATION,
-      });
-
-      runOnJS(Vibration.vibrate)(50, true);
-    })
-    .onEnd((_e, success) => {
-      if (success && props.onLongPress) {
-        console.log("Long press detected");
-        runOnJS(props.onLongPress)();
-      }
-
-      rippleOpacity.value = withTiming(0);
-    })
-    .onFinalize(() => {
-      rippleOpacity.value = withTiming(0);
-    });
-
-  const gesture = useCallback(() => {
-    if (props.onLongPress) {
-      return Gesture.Exclusive(tapGesture, longPressGesture);
-    }
-
-    return tapGesture;
-  }, [props.onLongPress]);
 
   const rippleAnimatedStyle = useAnimatedStyle(() => {
     const circleRadius = Math.sqrt(width.value ** 2 + height.value ** 2);
@@ -123,7 +96,7 @@ export default function RipplePressable(props: RipplePressableProps) {
   });
 
   return (
-    <GestureDetector gesture={gesture()}>
+    <GestureDetector gesture={gesture}>
       <Animated.View
         ref={containerRef}
         style={[props.style as StyleProp<ViewStyle>, styles.pressableStyle]}
