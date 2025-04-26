@@ -11,8 +11,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import * as ImagePicker from "expo-image-picker";
-import { uploadAvatar } from "@/src/api/user";
-import { useState } from "react";
+import { deleteAvatar, uploadAvatar } from "@/src/api/user";
 
 const { width } = Dimensions.get("window");
 
@@ -25,12 +24,8 @@ const imageOptions: ImagePicker.ImagePickerOptions = {
 };
 
 export default function Account() {
-  const { user, accessToken } = useAuth();
+  const { user, accessToken, setUser } = useAuth();
   const { parseColor } = useTheme();
-
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(
-    user?.avatar ?? null
-  );
 
   const animatedValue = useSharedValue(0);
 
@@ -61,7 +56,14 @@ export default function Account() {
     if (result.canceled) return;
 
     const filename = await uploadAvatar(accessToken!, result.assets[0].uri);
-    console.log(filename);
+    if (!filename) return;
+
+    setUser((user) => ({
+      ...user!,
+      avatar: filename,
+    }));
+
+    closeChangeAvatarMenu();
   };
 
   const openCamera = async () => {
@@ -74,7 +76,20 @@ export default function Account() {
     if (result.canceled) return;
 
     const filename = await uploadAvatar(accessToken!, result.assets[0].uri);
-    console.log(filename);
+    if (!filename) return;
+
+    setUser((user) => ({
+      ...user!,
+      avatar: filename,
+    }));
+
+    closeChangeAvatarMenu();
+  };
+
+  const removeAvatar = async () => {
+    deleteAvatar(accessToken!);
+    setUser((user) => ({ ...user!, avatar: null }));
+    closeChangeAvatarMenu();
   };
 
   if (!user) return null;
@@ -138,6 +153,7 @@ export default function Account() {
               <RipplePressable
                 style={styles.changeAvatarMenuButton}
                 rippleColor={parseColor("textPrimary", 0.05)}
+                onPress={removeAvatar}
               >
                 <FontAwesome
                   name="close"

@@ -1,11 +1,29 @@
 import Env from "../constants/Env";
 
+export enum Sex {
+  Female = "female",
+  Male = "male",
+}
+
+type DurationPerDate = {
+  date: string;
+  duration: number;
+};
+
 export type User = {
+  _id: string;
   firstName: string;
   lastName: string;
   identity: string;
   avatar: string | null;
   email: string;
+  sex: Sex;
+  group: string;
+  online: boolean;
+  lastSeen: Date | null;
+  timeOnApp: DurationPerDate[];
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 export type Tokens = {

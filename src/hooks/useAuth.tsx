@@ -1,28 +1,22 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
+import React, {
   createContext,
+  Dispatch,
   ReactNode,
+  SetStateAction,
   useContext,
   useEffect,
   useRef,
   useState,
 } from "react";
 import { router } from "expo-router";
-import { getCurrentUser, refreshTokens, login as APILogin } from "../api/auth";
-
-type User = {
-  firstName: string;
-  lastName: string;
-  identity: string;
-  avatar: string | null;
-  email: string;
-};
-
-type LoginData = {
-  user: User;
-  refreshToken: string;
-  accessToken: string;
-};
+import {
+  getCurrentUser,
+  refreshTokens,
+  login as APILogin,
+  type User,
+} from "../api/auth";
+import { Linking } from "react-native";
 
 type AuthProviderProps = Readonly<{
   children: ReactNode;
@@ -34,13 +28,8 @@ type ContextPorps = Readonly<{
   accessToken: string | null;
   login: (identity: string, password: string) => Promise<User | null>;
   logout: () => void;
-  setUser: (user: User) => void;
+  setUser: Dispatch<SetStateAction<User | null>>;
 }>;
-
-type ContextState = {
-  user: User | null;
-  ready: boolean;
-};
 
 const REFRESH_TOKEN_INTERVAL = 840000;
 
@@ -55,10 +44,8 @@ const AuthContext = createContext<ContextPorps>({
 
 export function AuthProvider(props: AuthProviderProps) {
   const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [state, setState] = useState<ContextState>({
-    user: null,
-    ready: false,
-  });
+  const [user, setUser] = useState<User | null>(null);
+  const [ready, setReady] = useState(false);
 
   async function refreshAccessToken(): Promise<string | null> {
     const refreshToken = await AsyncStorage.getItem("@refreshToken");
@@ -75,34 +62,65 @@ export function AuthProvider(props: AuthProviderProps) {
   const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    async function loadUser() {
-      const [refreshToken, cachedUser] = await Promise.all([
-        AsyncStorage.getItem("@refreshToken"),
-        AsyncStorage.getItem("@user"),
-      ]);
-
-      if (!refreshToken) return setState({ user: null, ready: true });
-
+    async function loadUser(cachedUser?: string) {
       if (cachedUser) {
-        setState({ user: JSON.parse(cachedUser), ready: true });
+        setUser(JSON.parse(cachedUser));
+        setReady(true);
       }
 
       const accessToken = await refreshAccessToken();
-      if (!accessToken) return setState({ user: null, ready: true });
 
+      if (!accessToken) {
+        setReady(true);
+        setUser(null);
+        return null;
+      }
+
+      if (refreshIntervalRef.current) clearInterval(refreshIntervalRef.current);
       refreshIntervalRef.current = setInterval(
         refreshAccessToken,
         REFRESH_TOKEN_INTERVAL
       );
 
       const user = await getCurrentUser(accessToken);
-      if (!user) return setState({ user: null, ready: true });
 
-      setState({ user, ready: true });
+      if (!user) {
+        setReady(true);
+        setUser(null);
+        return null;
+      }
+
+      setUser(user);
+      setReady(true);
+
       AsyncStorage.setItem("@user", JSON.stringify(user));
+
+      return user._id;
     }
 
-    loadUser();
+    AsyncStorage.getItem("@user").then(async (cachedUser) => {
+      const userLoggedIn = !!(await loadUser(cachedUser ?? undefined));
+      if (userLoggedIn) return;
+
+      const initialUrl = await Linking.getInitialURL();
+      if (!initialUrl) return;
+
+      const url = new URL(initialUrl);
+      const accessToken = url.searchParams.get("accessToken");
+      const refreshToken = url.searchParams.get("refreshToken");
+      const userId = url.searchParams.get("userId");
+
+      if (!accessToken || !refreshToken || !userId) return;
+
+      setAccessToken(accessToken);
+      await AsyncStorage.setItem("@refreshToken", refreshToken);
+
+      const loadedUserId = await loadUser();
+      if (loadedUserId === userId) return;
+
+      router.push("/authentication");
+      AsyncStorage.removeItem("@refreshToken");
+    });
 
     return () => {
       if (refreshIntervalRef.current) clearInterval(refreshIntervalRef.current);
@@ -113,7 +131,8 @@ export function AuthProvider(props: AuthProviderProps) {
     const data = await APILogin(identity, password);
     if (!data) return null;
 
-    setState({ user: data.user, ready: true });
+    setUser(data.user);
+    setReady(true);
     setAccessToken(data.accessToken);
 
     AsyncStorage.setItem("@user", JSON.stringify(data.user));
@@ -128,20 +147,16 @@ export function AuthProvider(props: AuthProviderProps) {
   };
 
   const logout = () => {
-    setState({ user: null, ready: true });
+    setUser(null);
     setAccessToken(null);
     AsyncStorage.removeItem("@user");
     if (refreshIntervalRef.current) clearInterval(refreshIntervalRef.current);
     router.push("/authentication");
   };
 
-  const setUser = (user: User) => {
-    setState((prevState) => ({ ...prevState, user }));
-  };
-
   return (
     <AuthContext.Provider
-      value={{ ...state, accessToken, login, logout, setUser }}
+      value={{ user, ready, accessToken, login, logout, setUser }}
     >
       {props.children}
     </AuthContext.Provider>

@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { View, Dimensions, StyleSheet } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Dimensions, StyleSheet, Linking } from "react-native";
 import Map from "../components/route-specific/home/map";
 import Navbar from "@/src/components/global/Navbar";
 import { FontAwesome6, MaterialCommunityIcons } from "@expo/vector-icons";

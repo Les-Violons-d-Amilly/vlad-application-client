@@ -1,4 +1,8 @@
-const EnvKeys = ["EXPO_PUBLIC_API_URL", "EXPO_PUBLIC_TOS_URL"] as const;
+const EnvKeys = [
+  "EXPO_PUBLIC_API_URL",
+  "EXPO_PUBLIC_TOS_URL",
+  "EXPO_PUBLIC_AVATAR_URL",
+] as const;
 
 const Env = (<unknown>process.env) as Record<(typeof EnvKeys)[number], string>;
 

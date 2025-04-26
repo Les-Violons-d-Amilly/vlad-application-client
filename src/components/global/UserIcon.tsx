@@ -1,8 +1,8 @@
+import Env from "@/src/constants/Env";
 import useAuth from "@/src/hooks/useAuth";
 import useTheme from "@/src/hooks/useTheme";
-import { lighten } from "@/src/utils/colors";
 import { FontAwesome6 } from "@expo/vector-icons";
-import { Image, StyleSheet, View } from "react-native";
+import { StyleSheet, View, Image } from "react-native";
 
 type UserIconProps = Readonly<{
   size?: number;
@@ -39,7 +39,7 @@ export default function UserIcon(props: UserIconProps) {
 
   return (
     <Image
-      source={{ uri: user.avatar }}
+      source={{ uri: `${Env.EXPO_PUBLIC_AVATAR_URL}/${user.avatar}` }}
       style={[
         {
           height: (props.size ?? 24) * 1.25,
@@ -49,7 +49,6 @@ export default function UserIcon(props: UserIconProps) {
         styles.avatar,
       ]}
       resizeMode="cover"
-      resizeMethod="scale"
     />
   );
 }

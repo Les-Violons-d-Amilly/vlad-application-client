@@ -6,13 +6,17 @@ type AvatarData = {
 };
 
 export async function deleteAvatar(accessToken: string) {
-  await fetch(`${Env.EXPO_PUBLIC_API_URL}/students/@me/avatar`, {
+  console.log("DELETE AVATAR");
+
+  const res = await fetch(`${Env.EXPO_PUBLIC_API_URL}/students/@me/avatar`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
     },
   });
+
+  console.log(res.status);
 }
 
 export async function uploadAvatar(accessToken: string, avatarUri: string) {
@@ -36,7 +40,7 @@ export async function uploadAvatar(accessToken: string, avatarUri: string) {
     body: formData,
   });
 
-  console.log(res.status);
+  console.log("UPLOAD STATUS:", res.status);
   if (!res.ok) return null;
   const data: AvatarData = await res.json();
   return data?.avatar ?? null;
