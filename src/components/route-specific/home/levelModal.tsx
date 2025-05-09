@@ -85,7 +85,7 @@ export default function LevelModal(props: LevelModalProps) {
                 color={
                   i < level.stars
                     ? "#f5ce62"
-                    : darken(parseColor("backgroundPrimary"), -5)
+                    : darken(parseColor("backgroundPrimary"), 5)
                 }
               />
             );

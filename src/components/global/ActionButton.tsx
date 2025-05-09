@@ -43,7 +43,7 @@ export default function ActionButton(props: ButtonProps) {
       {props.icon &&
         React.cloneElement(props.icon, {
           color: props.children ? "#ffffffbb" : "#ffffff",
-          size: props.size === "small" ? 16 : 24,
+          size: props.size === "small" ? 16 : 20,
         })}
       {props.children && (
         <Text

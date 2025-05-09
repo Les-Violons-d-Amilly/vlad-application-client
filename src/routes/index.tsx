@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { View, Dimensions, StyleSheet, Linking } from "react-native";
+import React, { useState } from "react";
+import { View, Dimensions, StyleSheet } from "react-native";
 import Map from "../components/route-specific/home/map";
 import Navbar from "@/src/components/global/Navbar";
 import { FontAwesome6, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -15,22 +15,27 @@ import UserIcon from "../components/global/UserIcon";
 import useTheme from "../hooks/useTheme";
 import { Redirect } from "expo-router";
 import useAuth from "../hooks/useAuth";
+import { FlatList } from "react-native-gesture-handler";
 
 const { width } = Dimensions.get("window");
 
-enum Page {
+export enum Page {
   Map,
   Account,
   Messages,
 }
 
+export type PageProps = {
+  setTab: (tab: number) => void;
+};
+
 export default function Home() {
-  const [currentPage, setCurrentPage] = useState(Page.Map);
+  const [currentPage, setCurrentPage] = useState(Page.Account);
 
   const { parseColor } = useTheme();
   const auth = useAuth();
 
-  const scrollViewAnimatedRef = useAnimatedRef<Animated.ScrollView>();
+  const scrollViewAnimatedRef = useAnimatedRef<FlatList>();
   const scrollX = useSharedValue(0);
 
   function onPageScroll(event: any) {
@@ -39,7 +44,7 @@ export default function Home() {
     setCurrentPage(pageIndex);
   }
 
-  function onTabPress(index: number) {
+  function setTab(index: number) {
     scrollX.value = index * width;
   }
 
@@ -56,32 +61,39 @@ export default function Home() {
         { backgroundColor: parseColor("backgroundPrimary") },
       ]}
     >
-      <Animated.ScrollView
+      <Animated.FlatList
+        data={[Map, Account, Messages]}
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         onScroll={onPageScroll}
         ref={scrollViewAnimatedRef}
-      >
-        <View children={<Map />} style={styles.page} />
-        <View children={<Account />} style={styles.page} />
-        <View children={<Messages />} style={styles.page} />
-      </Animated.ScrollView>
+        keyExtractor={(_, index) => index.toString()}
+        initialScrollIndex={Page.Account}
+        getItemLayout={(_, index) => ({
+          length: width,
+          offset: width * index,
+          index,
+        })}
+        renderItem={({ item: Page }) => (
+          <View children={<Page setTab={setTab} />} style={styles.page} />
+        )}
+      />
       <Navbar>
         <Navbar.Tab
           icon={<FontAwesome6 name="map-location-dot" />}
           selected={currentPage === Page.Map}
-          onPress={() => onTabPress(Page.Map)}
+          onPress={() => setTab(Page.Map)}
         />
         <Navbar.Tab
           icon={<UserIcon />}
           selected={currentPage === Page.Account}
-          onPress={() => onTabPress(Page.Account)}
+          onPress={() => setTab(Page.Account)}
         />
         <Navbar.Tab
-          icon={<MaterialCommunityIcons name="message-processing" />}
+          icon={<MaterialCommunityIcons name="assistant" />}
           selected={currentPage === Page.Messages}
-          onPress={() => onTabPress(Page.Messages)}
+          onPress={() => setTab(Page.Messages)}
         />
       </Navbar>
     </View>

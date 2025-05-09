@@ -1,7 +1,7 @@
+import useTheme from "@/src/hooks/useTheme";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React, {
   forwardRef,
-  RefObject,
   useImperativeHandle,
   useRef,
   useState,
@@ -24,6 +24,7 @@ type ValidationFunction = (
 
 type InputProps = Readonly<
   TextInputProps & {
+    label?: string;
     regex?: RegExp;
     needsNumber?: boolean;
     needsUppercase?: boolean;
@@ -40,6 +41,8 @@ export default forwardRef<TextInput, InputProps>(function Input(props, ref) {
   const [value, setValue] = useState<string>(props.value ?? "");
 
   const inputRef = useRef<TextInput>(null);
+
+  const { parseColor } = useTheme();
 
   const blur = () => {
     if (!inputRef.current) return;
@@ -106,10 +109,26 @@ export default forwardRef<TextInput, InputProps>(function Input(props, ref) {
 
   return (
     <OutsidePressHandler onOutsidePress={blur}>
-      <View style={styles.field}>
+      {props.label && (
+        <Text
+          style={[styles.fieldLabel, { color: parseColor("textSecondary") }]}
+        >
+          {props.label}
+        </Text>
+      )}
+      <View
+        style={[
+          styles.field,
+          { borderColor: error ? "#dc3545" : parseColor("border") },
+        ]}
+      >
         <TextInput
           {...props}
-          style={[props.style, styles.input]}
+          style={[
+            props.style,
+            { color: parseColor("textPrimary") },
+            styles.input,
+          ]}
           secureTextEntry={props.secureTextEntry && !visible}
           spellCheck={!props.secureTextEntry}
           autoCorrect={!props.secureTextEntry}
@@ -123,7 +142,7 @@ export default forwardRef<TextInput, InputProps>(function Input(props, ref) {
             <MaterialCommunityIcons
               name={visible ? "eye" : "eye-off"}
               size={18}
-              color="#666666"
+              color={parseColor("textSecondary")}
               style={styles.icon}
             />
           </Pressable>
@@ -140,7 +159,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
-    borderColor: "#cccccc",
     borderRadius: 10,
   },
   input: {
@@ -150,7 +168,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: "left",
     textAlignVertical: "center",
-    color: "#333333",
   },
   icon: {
     marginRight: 14,
@@ -160,5 +177,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     margin: 5,
     lineHeight: 20,
+  },
+  fieldLabel: {
+    fontSize: 15,
+    marginBottom: 5,
+    marginLeft: 5,
   },
 });

@@ -43,12 +43,19 @@ export default function Login() {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Connexion</Text>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: parseColor("backgroundPrimary") },
+      ]}
+    >
+      <Text style={[styles.title, { color: parseColor("textPrimary") }]}>
+        Connexion
+      </Text>
       <View style={styles.fields}>
         <View>
-          <Text style={styles.fieldLabel}>Identifiant</Text>
           <Input
+            label="Identifiant"
             value={identity}
             onChangeText={setIdentity}
             autoCapitalize="none"
@@ -61,9 +68,9 @@ export default function Login() {
           />
         </View>
         <View>
-          <Text style={styles.fieldLabel}>Mot de passe</Text>
           <Input
             secureTextEntry
+            label="Mot de passe"
             value={password}
             onChangeText={setPassword}
             needsLowercase
@@ -75,9 +82,6 @@ export default function Login() {
             autoCorrect={false}
             minLength={8}
           />
-          <Link style={styles.forgotPassword} href="/reset-password">
-            Mot de passe oublié ?
-          </Link>
         </View>
       </View>
       <Checkbox
@@ -85,7 +89,11 @@ export default function Login() {
         onChange={setConditionsAccepted}
         checked={conditionsAccepted}
       >
-        <Text style={styles.acceptText}>J'accepte les </Text>
+        <Text
+          style={[styles.acceptText, { color: parseColor("textSecondary") }]}
+        >
+          J'accepte les{" "}
+        </Text>
         <WebLink
           url={Env.EXPO_PUBLIC_TOS_URL}
           hideIcon
@@ -121,7 +129,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     padding: 30,
-    backgroundColor: "#fff",
   },
   errorRow: {
     flexDirection: "row",
@@ -147,12 +154,6 @@ const styles = StyleSheet.create({
   },
   fields: {
     gap: 15,
-  },
-  fieldLabel: {
-    fontSize: 15,
-    color: "#333333",
-    marginBottom: 5,
-    marginLeft: 5,
   },
   forgotPassword: {
     fontSize: 14,

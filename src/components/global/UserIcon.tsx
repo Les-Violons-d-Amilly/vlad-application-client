@@ -38,18 +38,31 @@ export default function UserIcon(props: UserIconProps) {
   }
 
   return (
-    <Image
-      source={{ uri: `${Env.EXPO_PUBLIC_AVATAR_URL}/${user.avatar}` }}
+    <View
       style={[
+        styles.avatarContainer,
         {
           height: (props.size ?? 24) * 1.25,
           width: (props.size ?? 24) * 1.25,
           borderRadius: ((props.size ?? 24) / 2) * 1.25,
+          padding: Math.ceil(((props.size ?? 24) / 2) * 0.1),
+          borderColor: props.color
+            ? props.color
+            : parseColor("backgroundSecondary"),
         },
-        styles.avatar,
       ]}
-      resizeMode="cover"
-    />
+    >
+      <Image
+        source={{ uri: `${Env.EXPO_PUBLIC_AVATAR_URL}/${user.avatar}` }}
+        style={[
+          {
+            borderRadius: ((props.size ?? 24) / 2) * 1.25,
+          },
+          styles.avatar,
+        ]}
+        resizeMode="cover"
+      />
+    </View>
   );
 }
 
@@ -58,7 +71,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  avatarContainer: {
+    borderWidth: 1,
+  },
   avatar: {
     objectFit: "cover",
+    height: "100%",
+    width: "100%",
   },
 });

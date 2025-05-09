@@ -60,10 +60,17 @@ Navbar.Tab = function (props: TabProps) {
     >
       {React.cloneElement(props.icon, {
         size: props.label ? 24 : 28,
-        color: isSelected() ? "#3372d6" : parseColor("textSecondary"),
+        color: isSelected()
+          ? parseColor("primary")
+          : parseColor("textTertiary"),
       })}
       {props.label && (
-        <Text style={[styles.label, isSelected() && { color: "#3372d6" }]}>
+        <Text
+          style={[
+            styles.label,
+            isSelected() && { color: parseColor("primary") },
+          ]}
+        >
           {props.label}
         </Text>
       )}

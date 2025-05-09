@@ -26,13 +26,12 @@ import { Note } from "./note";
 import RipplePressable from "../../global/RipplePressable";
 import { ScrollView } from "react-native-gesture-handler";
 import Animated, {
-  scrollTo,
   useAnimatedRef,
   useAnimatedStyle,
-  useDerivedValue,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import type { PageProps } from "@/src/routes";
 
 const { width, height } = Dimensions.get("window");
 const ITEM_HEIGHT = 120;
@@ -162,9 +161,7 @@ function LevelItem(props: LevelItemProps) {
             x={props.current.x - 23 + i * 17}
             y={38}
             size={4}
-            color={
-              i < props.current.stars ? "#f5ce62" : darken(innerColor, -15)
-            }
+            color={i < props.current.stars ? "#f5ce62" : darken(innerColor, 15)}
           />
         );
       })}
@@ -217,16 +214,16 @@ function LevelCategoryButton(props: LevelCategoryButtonProps) {
             height="20"
           >
             <Rect
-              fill={darken(props.category.color, -10)}
+              fill={darken(props.category.color, 10)}
               width="20"
               height="20"
             />
             <Polygon
-              fill={darken(props.category.color, -15)}
+              fill={darken(props.category.color, 15)}
               points="20 10 10 0 0 0 20 20"
             />
             <Polygon
-              fill={darken(props.category.color, -15)}
+              fill={darken(props.category.color, 15)}
               points="0 10 0 20 10 20"
             />
           </Pattern>
@@ -253,9 +250,9 @@ const Background = memo((props: BackgroundProps) => (
         width={120}
         height={120}
       >
-        <Rect fill={lighten(props.color, -60)} width={120} height={120} />
+        <Rect fill={lighten(props.color, 60)} width={120} height={120} />
         <Polygon
-          fill={lighten(props.color, -70)}
+          fill={lighten(props.color, 70)}
           points="120 120 60 120 90 90 120 60 120 0 120 0 60 60 0 0 0 60 30 90 60 120 120 120"
         />
       </Pattern>
@@ -264,16 +261,15 @@ const Background = memo((props: BackgroundProps) => (
   </Svg>
 ));
 
-export default function Map() {
+export default function Map(props: PageProps) {
   const [selectedCategory, setSelectedCategory] = useState(
-    LevelCategoryName.Category1
+    LevelCategoryName.Listening
   );
 
   const category = Levels[selectedCategory];
   const [selectedLevel, setSelectedLevel] = useState<Level | null>(null);
 
   const flatListAnimatedRef = useAnimatedRef<FlatList>();
-  const scrollY = useSharedValue(0);
 
   const getItemLayout = useCallback(
     (_: ArrayLike<Level> | null | undefined, index: number) => ({
@@ -293,13 +289,6 @@ export default function Map() {
     }, 100);
   }, []);
 
-  const onContentSizeChange = useCallback(
-    (_: number, height: number) => {
-      scrollY.value = height;
-    },
-    [selectedCategory]
-  );
-
   const renderItem = useCallback(
     ({ item, index }: { item: Level; index: number }) => (
       <LevelItem
@@ -314,32 +303,33 @@ export default function Map() {
     [category]
   );
 
-  useDerivedValue(() => {
-    scrollTo(flatListAnimatedRef, 0, scrollY.value, true);
-  });
-
   return (
     <React.Fragment>
       <Background color={category.color} />
-      <Animated.FlatList
-        data={category.levels}
-        keyExtractor={(item) => item.key.toString()}
-        renderItem={renderItem}
-        style={styles.mapContainer}
-        contentContainerStyle={styles.itemContainer}
-        initialNumToRender={10}
-        maxToRenderPerBatch={10}
-        windowSize={5}
-        removeClippedSubviews
-        showsVerticalScrollIndicator={false}
-        bounces={false}
-        bouncesZoom={false}
-        ref={flatListAnimatedRef}
-        initialScrollIndex={category.levels.length - 1}
-        getItemLayout={getItemLayout}
-        onScrollToIndexFailed={onScrollToIndexFailed}
-        onContentSizeChange={onContentSizeChange}
-      />
+      {Levels.map(
+        (category, index) =>
+          index === selectedCategory && (
+            <Animated.FlatList
+              key={index}
+              data={category.levels}
+              keyExtractor={(item) => item.key.toString()}
+              renderItem={renderItem}
+              style={styles.mapContainer}
+              contentContainerStyle={styles.itemContainer}
+              initialNumToRender={10}
+              maxToRenderPerBatch={10}
+              windowSize={5}
+              removeClippedSubviews
+              showsVerticalScrollIndicator={false}
+              bounces={false}
+              bouncesZoom={false}
+              ref={flatListAnimatedRef}
+              initialScrollIndex={Math.max(category.currentLevel - 3, 0)}
+              getItemLayout={getItemLayout}
+              onScrollToIndexFailed={onScrollToIndexFailed}
+            />
+          )
+      )}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}

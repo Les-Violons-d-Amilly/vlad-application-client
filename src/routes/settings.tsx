@@ -120,7 +120,7 @@ export default function Settings() {
                 {
                   color:
                     theme === Theme.System
-                      ? lighten(parseColor("primary"), -10)
+                      ? lighten(parseColor("primary"), 10)
                       : parseColor("textSecondary"),
                 },
               ]}
@@ -155,7 +155,7 @@ export default function Settings() {
                   {
                     color:
                       theme === name
-                        ? lighten(parseColor("primary"), -10)
+                        ? lighten(parseColor("primary"), 10)
                         : parseColor("textSecondary"),
                   },
                 ]}
@@ -175,20 +175,21 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    padding: 20,
-    paddingTop: StatusBar.currentHeight,
+    paddingHorizontal: 20,
+    paddingBottom: 15,
+    paddingTop: StatusBar.currentHeight! + 10,
     flexDirection: "row",
     alignItems: "center",
     gap: 20,
   },
   headerTitle: {
-    fontSize: 26,
+    fontSize: 22,
     fontWeight: "bold",
   },
   backButton: {
-    height: 40,
-    width: 40,
-    borderRadius: 20,
+    height: 36,
+    width: 36,
+    borderRadius: 18,
     alignItems: "center",
     justifyContent: "center",
   },
