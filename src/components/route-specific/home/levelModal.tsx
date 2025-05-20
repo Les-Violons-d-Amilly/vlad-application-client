@@ -69,7 +69,7 @@ export default function LevelModal(props: LevelModalProps) {
         ]}
       >
         <Text style={[styles.levelTitle, { color: parseColor("textPrimary") }]}>
-          Niveau {level.key + 1}
+          Niveau {level.number}
         </Text>
         <Text
           style={[styles.levelSubtitle, { color: parseColor("textSecondary") }]}

@@ -2,7 +2,6 @@ import { StyleSheet } from "react-native";
 import RootProviders from "../components/route-specific/rootProviders";
 import { Slot, useGlobalSearchParams, usePathname } from "expo-router";
 import { useEffect } from "react";
-import { AuthProvider } from "../hooks/useAuth";
 
 export default function RootLayout() {
   const pathname = usePathname();

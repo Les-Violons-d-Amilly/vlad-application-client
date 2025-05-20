@@ -1,6 +1,6 @@
 import Levels, {
+  Category,
   Level,
-  LevelCategory,
   LevelCategoryName,
 } from "@/src/constants/Levels";
 import { darken, lighten } from "@/src/utils/colors";
@@ -46,7 +46,7 @@ type LevelItemProps = Readonly<{
 }>;
 
 type LevelCategoryButtonProps = Readonly<{
-  category: LevelCategory;
+  category: Category;
   selected: boolean;
   onPress: () => void;
 }>;
@@ -152,7 +152,7 @@ function LevelItem(props: LevelItemProps) {
         fontWeight="bold"
         textAnchor="middle"
       >
-        {props.index + 1}
+        {props.current.number}
       </SvgText>
       {Array.from({ length: 3 }, (_, i) => {
         return (
@@ -312,7 +312,7 @@ export default function Map(props: PageProps) {
             <Animated.FlatList
               key={index}
               data={category.levels}
-              keyExtractor={(item) => item.key.toString()}
+              keyExtractor={(item) => item.number.toString()}
               renderItem={renderItem}
               style={styles.mapContainer}
               contentContainerStyle={styles.itemContainer}

@@ -230,7 +230,9 @@ export default function Account(props: PageProps) {
             <ProgressChart
               data={{
                 labels: Levels.map((category) => category.name),
-                data: Levels.map((category) => category.progress),
+                data: Levels.map((category) =>
+                  isNaN(category.progress) ? 1 : category.progress
+                ),
               }}
               width={(width - 20) * 0.6}
               height={(width - 20) * 0.6}
@@ -264,8 +266,9 @@ export default function Account(props: PageProps) {
                 </Text>
                 <Text style={styles.categoryButtonCategoryProgress}>
                   {category.currentLevel}/{category.levelsCount} (
-                  {(
-                    category.currentLevel / category.levelsCount
+                  {(isNaN(category.progress)
+                    ? 1
+                    : category.progress
                   ).toLocaleString("fr-FR", {
                     style: "percent",
                     minimumFractionDigits: 0,
@@ -324,9 +327,15 @@ export default function Account(props: PageProps) {
               labelColor: (opacity = 1) => parseColor("textSecondary", opacity),
             }}
             formatYLabel={(value) => parseInt(value).toString() + "h"}
-            style={{ marginVertical: 25 }}
+            style={styles.timeSpentChart}
           />
         </View>
+        <View
+          style={[
+            styles.separator,
+            { backgroundColor: parseColor("backgroundSecondary") },
+          ]}
+        />
       </View>
     </ScrollView>
   );
@@ -444,5 +453,8 @@ const styles = StyleSheet.create({
     right: 5,
     bottom: 5,
     borderWidth: 6,
+  },
+  timeSpentChart: {
+    marginVertical: 25,
   },
 });
