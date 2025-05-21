@@ -150,7 +150,7 @@ const Levels: Category[] = [
   }),
   new Category(LevelCategoryName.Listening, "#6c24f2"),
   new Category(LevelCategoryName.Rhythm, "#2dda94").addLevel({
-    title: "Polyrhythme",
+    title: "Polyrythme",
     description: "Deux cercles de rythme à jouer en même temps",
     rules: "Jouez les deux cercles de rythme en même temps.",
   }),

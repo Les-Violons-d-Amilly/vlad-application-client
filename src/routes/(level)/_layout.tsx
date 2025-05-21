@@ -104,22 +104,13 @@ export default function Layout() {
         </Text>
         <RipplePressable
           onPress={toggleRules}
-          style={{
-            marginLeft: "auto",
-            backgroundColor: parseColor(rulesShown ? "danger" : "primary"),
-            paddingVertical: 5,
-            paddingHorizontal: 10,
-            borderRadius: 5,
-          }}
+          style={[
+            styles.rulesButton,
+            { backgroundColor: parseColor(rulesShown ? "danger" : "primary") },
+          ]}
           rippleColor="#ffffff22"
         >
-          <Text
-            style={{
-              color: "#ffffffcc",
-              fontWeight: "bold",
-              fontSize: 12,
-            }}
-          >
+          <Text style={styles.rulesButtonText}>
             {rulesShown ? "Masquer les règles" : "Afficher les règles"}
           </Text>
         </RipplePressable>
@@ -127,10 +118,8 @@ export default function Layout() {
       <Animated.View
         style={[
           animatedStyle,
+          styles.rulesContent,
           {
-            overflow: "hidden",
-            position: "absolute",
-            width: "100%",
             top: headerHeight,
             backgroundColor: parseColor("backgroundSecondary"),
           },
@@ -139,13 +128,13 @@ export default function Layout() {
         onLayout={measureRules}
       >
         <Text
-          style={{
-            paddingHorizontal: 20,
-            paddingVertical: 10,
-            color: parseColor("textSecondary"),
-            borderTopWidth: 1,
-            borderTopColor: parseColor("backgroundTertiary"),
-          }}
+          style={[
+            styles.rulesDescription,
+            {
+              color: parseColor("textSecondary"),
+              borderTopColor: parseColor("backgroundTertiary"),
+            },
+          ]}
         >
           {level.rules}
         </Text>
@@ -177,5 +166,26 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     color: "#000",
+  },
+  rulesButton: {
+    marginLeft: "auto",
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+  },
+  rulesButtonText: {
+    color: "#ffffffcc",
+    fontWeight: "bold",
+    fontSize: 12,
+  },
+  rulesContent: {
+    overflow: "hidden",
+    position: "absolute",
+    width: "100%",
+  },
+  rulesDescription: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderTopWidth: 1,
   },
 });
