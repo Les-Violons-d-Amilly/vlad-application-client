@@ -95,7 +95,7 @@ export class Level implements LevelSettings {
       pathname: `/(level)/(${subfolder})/${this.number}`,
       params: {
         level: this.number.toString(),
-        category: "" + this.category,
+        category: this.category.toString(),
       },
     } as Href;
   }
@@ -143,12 +143,12 @@ export class Category {
 }
 
 const Levels: Category[] = [
+  new Category(LevelCategoryName.Listening, "#6c24f2"),
   new Category(LevelCategoryName.Reading, "#f22447").addLevel({
     title: "Placement des notes",
     description: "Placement des notes sur la portée",
     rules: "Déplacez les notes sur la portée pour les placer correctement.",
   }),
-  new Category(LevelCategoryName.Listening, "#6c24f2"),
   new Category(LevelCategoryName.Rhythm, "#2dda94").addLevel({
     title: "Polyrythme",
     description: "Deux cercles de rythme à jouer en même temps",
