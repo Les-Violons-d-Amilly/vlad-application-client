@@ -164,7 +164,6 @@ export class Category {
 }
 
 const Levels: Category[] = [
-  new Category(LevelCategoryName.Listening, "#6c24f2").addCourse("Cassoulet"),
   new Category(LevelCategoryName.Listening, "#6c24f2")
     .addLevel({
       title: "Reconnaissance des notes",
@@ -176,11 +175,13 @@ const Levels: Category[] = [
       description: "Reconnaissance des notes sur la portée",
       rules: "Touchez la note qui correspon à la note jouée.",
     }),
-  new Category(LevelCategoryName.Reading, "#f22447").addLevel({
-    title: "Placement des notes",
-    description: "Placement des notes sur la portée",
-    rules: "Déplacez les notes sur la portée pour les placer correctement.",
-  }),
+  new Category(LevelCategoryName.Reading, "#f22447")
+    .addCourse("Placement des Notes")
+    .addLevel({
+      title: "Placement des Notes",
+      description: "Placement des notes sur la portée",
+      rules: "Déplacez les notes sur la portée pour les placer correctement.",
+    }),
   new Category(LevelCategoryName.Rhythm, "#2dda94").addLevel({
     title: "Polyrythme",
     description: "Deux cercles de rythme à jouer en même temps",

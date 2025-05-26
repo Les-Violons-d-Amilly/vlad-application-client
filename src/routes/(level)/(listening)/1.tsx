@@ -4,9 +4,9 @@ import { Audio } from "expo-av";
 
 const NOTES = ["do", "re", "mi"];
 const NOTE_SOUNDS: Record<string, any> = {
-  do: require("../../../sounds/do.wav"),
-  re: require("../../../sounds/re.wav"),
-  mi: require("../../../sounds/mi.wav"),
+  do: require("../../../../assets/sounds/do.wav"),
+  re: require("../../../../assets/sounds/re.wav"),
+  mi: require("../../../../assets/sounds/mi.wav"),
 };
 
 export default function NoteRecognitionGame() {
