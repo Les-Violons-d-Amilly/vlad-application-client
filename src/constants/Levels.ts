@@ -48,10 +48,28 @@ function applyLayout(x: number) {
   return x;
 }
 
-export class Level implements LevelSettings {
+export class Step {
   public number: number;
-  public category: LevelCategoryName;
   public x: number;
+  public category: LevelCategoryName;
+
+  constructor(number: number, category: LevelCategoryName) {
+    this.number = number;
+    this.category = category;
+    this.x = applyLayout(seedFunctions[category](number));
+  }
+}
+
+export class Course extends Step {
+  public title: string;
+
+  constructor(number: number, category: LevelCategoryName, title: string) {
+    super(number, category);
+    this.title = title;
+  }
+}
+
+export class Level extends Step implements LevelSettings {
   public stars: number;
 
   public title: string;
@@ -63,10 +81,8 @@ export class Level implements LevelSettings {
     category: LevelCategoryName,
     settings: LevelSettings
   ) {
-    this.number = number;
-    this.category = category;
+    super(number, category);
     this.stars = (number % 3) + 1;
-    this.x = applyLayout(seedFunctions[category](number));
 
     this.title = settings.title;
     this.description = settings.description;
@@ -106,7 +122,7 @@ export class Category {
   public name: string;
   public color: string;
   public currentLevel: number = 0;
-  public levels: Level[] = [];
+  public steps: Step[] = [];
 
   constructor(id: LevelCategoryName, color: string) {
     this.id = id;
@@ -128,22 +144,27 @@ export class Category {
     }
   }
 
-  get levelsCount(): number {
-    return this.levels.length;
+  get stepsCount(): number {
+    return this.steps.length;
   }
 
   get progress(): number {
-    return this.currentLevel / this.levelsCount;
+    return this.currentLevel / this.stepsCount;
   }
 
   public addLevel(level: LevelSettings) {
-    this.levels.push(new Level(this.levelsCount + 1, this.id, level));
+    this.steps.push(new Level(this.stepsCount + 1, this.id, level));
+    return this;
+  }
+
+  public addCourse(title: string) {
+    this.steps.push(new Course(this.stepsCount + 1, this.id, title));
     return this;
   }
 }
 
 const Levels: Category[] = [
-  new Category(LevelCategoryName.Listening, "#6c24f2"),
+  new Category(LevelCategoryName.Listening, "#6c24f2").addCourse("Cassoulet"),
   new Category(LevelCategoryName.Reading, "#f22447").addLevel({
     title: "Placement des notes",
     description: "Placement des notes sur la portée",

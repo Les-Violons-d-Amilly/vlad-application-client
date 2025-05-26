@@ -8,5 +8,8 @@ export default function getLevel(
     return null;
   }
 
-  return Levels[category].levels[levelNum - 1] ?? null;
+  const step = Levels[category].steps[levelNum - 1] ?? null;
+
+  if (step instanceof Level) return step;
+  return null;
 }

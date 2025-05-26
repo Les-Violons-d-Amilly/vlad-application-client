@@ -1,7 +1,9 @@
 import Levels, {
   Category,
+  Course,
   Level,
   LevelCategoryName,
+  Step,
 } from "@/src/constants/Levels";
 import { darken, lighten } from "@/src/utils/colors";
 import React, { useCallback, memo, useRef, useEffect, useState } from "react";
@@ -15,6 +17,7 @@ import {
 } from "react-native";
 import Svg, {
   Defs,
+  G,
   Path,
   Pattern,
   Polygon,
@@ -40,9 +43,9 @@ const CELL_SIZE = 75;
 type LevelItemProps = Readonly<{
   index: number;
   color: string;
-  current: Level;
-  next: Level | null;
-  selectLevel: (level: Level | null) => void;
+  current: Step;
+  next: Step | null;
+  selectLevel: (level: Step | null) => void;
 }>;
 
 type LevelCategoryButtonProps = Readonly<{
@@ -97,7 +100,10 @@ function LevelLink(props: LevelLinkProps) {
 }
 
 function LevelItem(props: LevelItemProps) {
-  const innerColor = props.current.stars === 0 ? "#6e6e73" : props.color;
+  const innerColor =
+    props.current instanceof Level && props.current.stars === 0
+      ? "#6e6e73"
+      : props.color;
 
   async function onPress(e: GestureResponderEvent) {
     if (
@@ -124,7 +130,7 @@ function LevelItem(props: LevelItemProps) {
           y1={CELL_SIZE / 2}
           x2={props.next.x}
           y2={ITEM_HEIGHT}
-          done={props.next.stars > 0}
+          done={props.next instanceof Level && props.next.stars > 0}
           color={props.color}
         />
       )}
@@ -146,25 +152,42 @@ function LevelItem(props: LevelItemProps) {
       />
       <SvgText
         x={props.current.x + 37.5 - CELL_SIZE / 2}
-        y={30}
-        fill="#ffffffdf"
-        fontSize={28}
+        y={props.current instanceof Level ? 30 : 37}
+        fill={props.current instanceof Level ? "#ffffffdf" : "#ffffffee"}
+        fontSize={props.current instanceof Level ? 28 : 24}
         fontWeight="bold"
         textAnchor="middle"
       >
         {props.current.number}
       </SvgText>
-      {Array.from({ length: 3 }, (_, i) => {
-        return (
-          <Note
-            key={i}
-            x={props.current.x - 23 + i * 17}
-            y={38}
-            size={4}
-            color={i < props.current.stars ? "#f5ce62" : darken(innerColor, 15)}
+      {props.current instanceof Level &&
+        Array.from({ length: 3 }, (_, i) => {
+          return (
+            <Note
+              key={i}
+              x={props.current.x - 23 + i * 17}
+              y={38}
+              size={4}
+              color={
+                i < (props.current as Level).stars
+                  ? "#f5ce62"
+                  : darken(innerColor, 15)
+              }
+            />
+          );
+        })}
+      {props.current instanceof Course && (
+        <G x={props.current.x - 24} y={10} scale={2}>
+          <Path
+            fill="#ffffff88"
+            d="M 20.421875 8.433594 C 20.421875 3.636719 16.390625 -0.242188 11.542969 0.0117188 C 7.152344 0.265625 3.679688 3.890625 3.578125 8.28125 C 3.578125 10.476562 4.390625 12.515625 5.824219 14.101562 C 8.164062 16.605469 7.863281 19.511719 7.863281 19.511719 C 7.863281 20.070312 8.324219 20.53125 8.886719 20.53125 L 15.109375 20.53125 C 15.667969 20.53125 16.128906 20.070312 16.179688 19.511719 C 16.179688 19.511719 15.835938 16.679688 18.171875 14.15625 C 19.605469 12.621094 20.421875 10.578125 20.421875 8.433594 Z M 14.144531 18.539062 L 9.855469 18.539062 C 9.753906 16.445312 8.835938 14.40625 7.355469 12.824219 C 6.230469 11.597656 5.671875 10.019531 5.671875 8.386719 C 5.722656 5.015625 8.324219 2.261719 11.695312 2.058594 C 15.371094 1.851562 18.429688 4.8125 18.429688 8.433594 C 18.429688 10.019531 17.816406 11.597656 16.695312 12.769531 C 15.164062 14.40625 14.246094 16.445312 14.144531 18.539062 Z M 14.144531 18.539062"
           />
-        );
-      })}
+          <Path
+            fill="#ffffff88"
+            d="M 13.785156 21.960938 L 10.160156 21.960938 C 9.601562 21.960938 9.140625 22.421875 9.140625 22.980469 C 9.140625 23.539062 9.601562 24 10.160156 24 L 13.785156 24 C 14.34375 24 14.804688 23.539062 14.804688 22.980469 C 14.804688 22.421875 14.351562 21.960938 13.785156 21.960938 Z M 13.785156 21.960938"
+          />
+        </G>
+      )}
     </Svg>
   );
 }
@@ -267,12 +290,12 @@ export default function Map(props: PageProps) {
   );
 
   const category = Levels[selectedCategory];
-  const [selectedLevel, setSelectedLevel] = useState<Level | null>(null);
+  const [selectedLevel, setSelectedLevel] = useState<Step | null>(null);
 
   const flatListAnimatedRef = useAnimatedRef<FlatList>();
 
   const getItemLayout = useCallback(
-    (_: ArrayLike<Level> | null | undefined, index: number) => ({
+    (_: ArrayLike<Step> | null | undefined, index: number) => ({
       length: ITEM_HEIGHT,
       offset: ITEM_HEIGHT * index,
       index,
@@ -290,12 +313,12 @@ export default function Map(props: PageProps) {
   }, []);
 
   const renderItem = useCallback(
-    ({ item, index }: { item: Level; index: number }) => (
+    ({ item, index }: { item: Step; index: number }) => (
       <LevelItem
         index={index}
         current={item}
         color={category.color}
-        next={category.levels[index + 1] || null}
+        next={category.steps[index + 1] || null}
         selectLevel={setSelectedLevel}
         key={index.toString()}
       />
@@ -311,7 +334,7 @@ export default function Map(props: PageProps) {
           index === selectedCategory && (
             <Animated.FlatList
               key={index}
-              data={category.levels}
+              data={category.steps}
               keyExtractor={(item) => item.number.toString()}
               renderItem={renderItem}
               style={styles.mapContainer}
@@ -346,7 +369,7 @@ export default function Map(props: PageProps) {
         ))}
       </ScrollView>
       <LevelModal
-        level={selectedLevel}
+        level={selectedLevel as Level}
         closeModal={() => setSelectedLevel(null)}
       />
     </React.Fragment>

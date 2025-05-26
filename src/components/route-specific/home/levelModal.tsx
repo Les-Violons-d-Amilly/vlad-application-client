@@ -1,4 +1,4 @@
-import { Level } from "@/src/constants/Levels";
+import { Level, Step } from "@/src/constants/Levels";
 import { useEffect, useState } from "react";
 import { Dimensions, StyleSheet, Text, View } from "react-native";
 import OutsidePressHandler from "react-native-outside-press";
