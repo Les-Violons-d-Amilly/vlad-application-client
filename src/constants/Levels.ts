@@ -164,8 +164,8 @@ export class Category {
 }
 
 const Levels: Category[] = [
-  new Category(LevelCategoryName.Listening, "#6c24f2").addCourse("Cassoulet"),
   new Category(LevelCategoryName.Listening, "#6c24f2")
+    .addCourse("Cassoulet")
     .addLevel({
       title: "Reconnaissance des notes",
       description: "Reconnaissance des notes do, ré, mi",
