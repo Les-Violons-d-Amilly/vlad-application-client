@@ -65,32 +65,47 @@ export default function LevelModal(props: LevelModalProps) {
         onOutsidePress={props.closeModal}
         style={[
           styles.container,
-          { backgroundColor: parseColor("backgroundPrimary") },
+          {
+            backgroundColor: parseColor("backgroundPrimary"),
+            height: props.level instanceof Level ? width - 50 : width - 210,
+            transform: [
+              { translateX: -((width - 50) / 2) },
+              {
+                translateY: -(
+                  (props.level instanceof Level ? width - 50 : width - 210) / 2
+                ),
+              },
+            ],
+          },
         ]}
       >
         <Text style={[styles.levelTitle, { color: parseColor("textPrimary") }]}>
-          Niveau {level.number}
+          {props.level instanceof Level
+            ? `Niveau ${level.number}`
+            : `Cours #${level.number}`}
         </Text>
         <Text
           style={[styles.levelSubtitle, { color: parseColor("textSecondary") }]}
         >
           {level.title}
         </Text>
-        <View style={styles.note}>
-          {Array.from({ length: 3 }, (_, i) => {
-            return (
-              <Note
-                key={i}
-                size={16}
-                color={
-                  i < level.stars
-                    ? "#f5ce62"
-                    : darken(parseColor("backgroundPrimary"), 5)
-                }
-              />
-            );
-          })}
-        </View>
+        {props.level instanceof Level && (
+          <View style={styles.note}>
+            {Array.from({ length: 3 }, (_, i) => {
+              return (
+                <Note
+                  key={i}
+                  size={16}
+                  color={
+                    i < level.stars
+                      ? "#f5ce62"
+                      : darken(parseColor("backgroundPrimary"), 5)
+                  }
+                />
+              );
+            })}
+          </View>
+        )}
         <Text
           style={[styles.description, { color: parseColor("textTertiary") }]}
         >
@@ -133,14 +148,9 @@ const styles = StyleSheet.create({
   },
   container: {
     position: "absolute",
-    height: width - 50,
     width: width - 50,
     top: "50%",
     left: "50%",
-    transform: [
-      { translateX: -((width - 50) / 2) },
-      { translateY: -((width - 50) / 2) },
-    ],
     zIndex: 999,
     borderRadius: 25,
     padding: 15,

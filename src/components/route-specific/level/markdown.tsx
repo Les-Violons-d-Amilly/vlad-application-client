@@ -2,10 +2,14 @@ import React from "react";
 import { ScrollView } from "react-native-gesture-handler";
 import MarkdownView from "react-native-markdown-display";
 
-export default function Markdown(content: string) {
+type MarkdownProps = Readonly<{
+  children?: string;
+}>;
+
+export default function Markdown(props: MarkdownProps) {
   return (
     <ScrollView>
-      <MarkdownView>{content.trim()}</MarkdownView>
+      <MarkdownView>{props.children?.trim()}</MarkdownView>
     </ScrollView>
   );
 }
