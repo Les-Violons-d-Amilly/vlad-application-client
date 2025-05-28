@@ -2,7 +2,21 @@ import React, { useEffect, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import useTheme from "@/src/hooks/useTheme";
 import { Audio } from "expo-av";
-import { lcm } from "mathjs";
+
+function gcd(a: number, b: number) {
+  for (let temp = b; b !== 0; ) {
+    b = a % b;
+    a = temp;
+    temp = b;
+  }
+
+  return a;
+}
+
+function lcm(a: number, b: number) {
+  const gcdValue = gcd(a, b);
+  return (a * b) / gcdValue;
+}
 
 type Drum = {
   correct: number;
