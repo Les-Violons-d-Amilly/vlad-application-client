@@ -8,7 +8,7 @@ export function getLevel(
     return null;
   }
 
-  const step = Levels[category].steps[levelNum - 1] ?? null;
+  const step = Levels[category].steps[levelNum] ?? null;
 
   if (step instanceof Level) return step;
   return null;
@@ -22,7 +22,7 @@ export function getCourse(
     return null;
   }
 
-  const step = Levels[category].steps[courseNum - 1] ?? null;
+  const step = Levels[category].steps[courseNum] ?? null;
 
   if (step instanceof Course) return step;
   return null;
