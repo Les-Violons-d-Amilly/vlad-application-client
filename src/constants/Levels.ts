@@ -163,7 +163,7 @@ export class Category {
 const Levels: Category[] = [
   new Category(
     LevelCategoryName.Listening,
-    "#6c24f2",
+    "Écoute",
     "listening",
     "#6c24f2",
     (i: number) =>
