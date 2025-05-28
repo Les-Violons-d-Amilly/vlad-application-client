@@ -4,24 +4,51 @@ import useTheme from "@/src/hooks/useTheme";
 import { Audio } from "expo-av";
 import { lcm } from "mathjs";
 
+type Drum = {
+  correct: number;
+  missed: number;
+  on: boolean;
+};
+
 const METRONOME = require("../../../../assets/sounds/metronome.wav");
 
+const DRUMS: Drum[] = new Array(2)
+  .fill(null)
+  .map(() => ({ correct: 0, missed: 0, on: false, clicked: false }));
+
 // props
-const bps = [1, 1];
+const bps = [1, 2];
 const LEVEL_DURATION = 30;
 
 const BEAT_DURATION = 5;
 
 export default function () {
   const { parseColor } = useTheme();
-  const [countdown, setCountdown] = useState(3);
+  const [information, setInformation] = useState("4");
 
-  const INTERVAL_DURATION = Math.round(1000 / lcm(bps[0], bps[1]));
+  const lcmValue = lcm(bps[0], bps[1]) * 2;
+
+  const INTERVAL_DURATION = Math.round(1000 / lcmValue);
 
   const DEFAULT_BUTTON_COLOR = parseColor("primary");
   const BEAT_BUTTON_COLOR = parseColor("success");
 
   const [bgc, setBgc] = useState([DEFAULT_BUTTON_COLOR, DEFAULT_BUTTON_COLOR]);
+
+  const changeBgc = () => {
+    setBgc([
+      DRUMS[0].on ? BEAT_BUTTON_COLOR : DEFAULT_BUTTON_COLOR,
+      DRUMS[1].on ? BEAT_BUTTON_COLOR : DEFAULT_BUTTON_COLOR,
+    ]);
+  };
+
+  const drumClickHandler = (key: number) => {
+    if (DRUMS[key].on) {
+      DRUMS[key].correct++;
+    } else {
+      DRUMS[key].missed++;
+    }
+  };
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -30,6 +57,8 @@ export default function () {
     const polyrythme = async () => {
       let now = 0;
       let beat = 0;
+      let count = 0;
+      let newCountdown = parseInt(information);
 
       try {
         sound = (await Audio.Sound.createAsync(METRONOME)).sound;
@@ -37,6 +66,7 @@ export default function () {
         interval = setInterval(() => {
           //Level duration
           if (beat >= LEVEL_DURATION + 3) {
+            setInformation("Terminé !");
             clearInterval(interval);
             return;
           }
@@ -45,12 +75,27 @@ export default function () {
           if (now >= beat * 1000) {
             sound.replayAsync();
             beat++;
-            if (countdown > 0) setCountdown(countdown - 1);
+            if (newCountdown > 0) {
+              newCountdown--;
+              setInformation(newCountdown.toString());
+              if (newCountdown === 0) {
+                setInformation("C'est parti !");
+              }
+            }
           }
 
           //Game logic
           if (now >= 3000) {
-            setBgc([DEFAULT_BUTTON_COLOR, BEAT_BUTTON_COLOR]);
+            for (let i = 0; i < 2; i++) {
+              if (count % (lcmValue / bps[i]) == 0) {
+                DRUMS[i].on = true;
+              } else {
+                DRUMS[i].on = false;
+              }
+              changeBgc();
+            }
+            count++;
+            if (count >= lcmValue) count = 0;
           }
 
           now += INTERVAL_DURATION;
@@ -71,23 +116,22 @@ export default function () {
   return (
     <React.Fragment>
       <View style={styles.pageContent}>
-        {countdown > 0 && (
-          <View style={styles.countdownView}>
-            <Text style={styles.countdown}>{countdown}</Text>
-          </View>
-        )}
-        <View style={styles.scoreView}>
-          <Text>1</Text>
-          <Text>-</Text>
-          <Text>0</Text>
+        <View style={styles.informationView}>
+          <Text style={styles.information}>{information}</Text>
         </View>
         <View style={styles.rythmButtonRow}>
           <Pressable
             style={[styles.rythmButton, { backgroundColor: bgc[0] }]}
-          />
+            onPress={() => drumClickHandler(0)}
+          >
+            <Text style={styles.rythmButtonText}>{bps[0]}</Text>
+          </Pressable>
           <Pressable
             style={[styles.rythmButton, { backgroundColor: bgc[1] }]}
-          />
+            onPress={() => drumClickHandler(1)}
+          >
+            <Text style={styles.rythmButtonText}>{bps[1]}</Text>
+          </Pressable>
         </View>
       </View>
     </React.Fragment>
@@ -101,13 +145,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 20,
   },
-  countdownView: {
+  informationView: {
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
   },
-  countdown: {
-    fontSize: 100,
+  information: {
+    fontSize: 60,
     fontWeight: "bold",
     color: "#000",
   },
@@ -124,6 +168,15 @@ const styles = StyleSheet.create({
     borderTopWidth: 2,
     borderLeftWidth: 4,
     borderRightWidth: 4,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  rythmButtonText: {
+    fontSize: 40,
+    fontWeight: "bold",
+    color: "#000",
+    textAlign: "center",
   },
   scoreView: {
     width: "100%",
