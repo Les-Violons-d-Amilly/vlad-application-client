@@ -7,18 +7,21 @@ type ThemeProviderProps = Readonly<{
   children: React.ReactNode;
 }>;
 
+type ThemeProviderReturnType<T> = T extends ThemeColorName ? string : undefined;
+
 type ThemeContextProps = Readonly<{
   theme: Theme;
   parseColor: <T extends ThemeColorName | undefined>(
     colorName: T,
     opacity?: number
-  ) => T;
+  ) => ThemeProviderReturnType<T>;
   setTheme: (theme: Theme) => void;
 }>;
 
 const ThemeContext = createContext<ThemeContextProps>({
   theme: Theme.System,
-  parseColor: <T extends ThemeColorName | undefined>() => undefined as T,
+  parseColor: <T extends ThemeColorName | undefined>() =>
+    undefined as ThemeProviderReturnType<T>,
   setTheme: () => {},
 });
 
@@ -43,21 +46,21 @@ export function ThemeProvider(props: ThemeProviderProps) {
     colorName: T,
     opacity?: number
   ) {
-    let color = undefined as T;
+    let color = undefined as ThemeProviderReturnType<T>;
     if (!colorName) return color;
 
     if (theme === Theme.System) {
       color = Themes[isSystemDarkMode ? "dark" : "light"].colors[
         colorName
-      ] as T;
+      ] as ThemeProviderReturnType<T>;
     } else {
-      color = Themes[theme].colors[colorName] as T;
+      color = Themes[theme].colors[colorName] as ThemeProviderReturnType<T>;
     }
 
     if (opacity) {
       color = `${color}${Math.round(opacity * 255)
         .toString(16)
-        .padStart(2, "0")}` as T;
+        .padStart(2, "0")}` as ThemeProviderReturnType<T>;
     }
 
     return color;
