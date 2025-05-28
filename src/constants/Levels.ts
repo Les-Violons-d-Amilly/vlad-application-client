@@ -173,12 +173,12 @@ const Levels: Category[] = [
     .addLevel({
       title: "Reconnaissance des notes",
       description: "Reconnaissance des notes do, ré, mi",
-      rules: "Touchez la note qui correspon à la note jouée.",
+      rules: "Touchez la note qui correspond à la note jouée.",
     })
     .addLevel({
       title: "Reconnaissance des notes",
       description: "Reconnaissance des notes sur la portée",
-      rules: "Touchez la note qui correspon à la note jouée.",
+      rules: "Touchez la note qui correspond à la note jouée.",
     }),
   new Category(
     LevelCategoryName.Reading,
