@@ -8,6 +8,7 @@ type Drum = {
   correct: number;
   missed: number;
   on: boolean;
+  clicked: boolean;
 };
 
 const METRONOME = require("../../../../assets/sounds/metronome.wav");
@@ -21,6 +22,9 @@ const bps = [1, 2];
 const LEVEL_DURATION = 30;
 
 const BEAT_DURATION = 5;
+
+let miss = 0;
+let correct = 0;
 
 export default function () {
   const { parseColor } = useTheme();
@@ -43,10 +47,37 @@ export default function () {
   };
 
   const drumClickHandler = (key: number) => {
-    if (DRUMS[key].on) {
-      DRUMS[key].correct++;
+    DRUMS[key].clicked = true;
+  };
+
+  const scoreHandler = (i: number) => {
+    if (DRUMS[i].on) {
+      if (DRUMS[(i + 1) % 2].on) {
+        if (DRUMS[i].clicked && DRUMS[(i + 1) % 2].clicked) {
+          correct++;
+          DRUMS[i].clicked = false;
+          DRUMS[(i + 1) % 2].clicked = false;
+          setInformation("Perfect !");
+        } else {
+          miss++;
+          setInformation("Raté !");
+        }
+      } else {
+        if (DRUMS[i].clicked) {
+          correct++;
+          DRUMS[i].clicked = false;
+          setInformation("Perfect !");
+        } else {
+          miss++;
+          setInformation("Raté !");
+        }
+      }
     } else {
-      DRUMS[key].missed++;
+      if (DRUMS[i].clicked) {
+        miss++;
+        setInformation("Trop vite !");
+        DRUMS[i].clicked = false;
+      }
     }
   };
 
@@ -87,6 +118,8 @@ export default function () {
           //Game logic
           if (now >= 3000) {
             for (let i = 0; i < 2; i++) {
+              scoreHandler(i);
+
               if (count % (lcmValue / bps[i]) == 0) {
                 DRUMS[i].on = true;
               } else {
