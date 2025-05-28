@@ -60,8 +60,8 @@ export class Step {
         this.category.folderName
       })/${this.number}`,
       params: {
-        step: this.index.toString(),
-        category: this.category.toString(),
+        step: this.number.toString(),
+        category: this.category.id.toString(),
       },
     } as Href;
   }
