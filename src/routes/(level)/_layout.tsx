@@ -1,7 +1,7 @@
 import RipplePressable from "@/src/components/global/RipplePressable";
 import { LevelCategoryName } from "@/src/constants/Levels";
 import useTheme from "@/src/hooks/useTheme";
-import getLevel from "@/src/utils/getLevel";
+import { getLevel } from "@/src/utils/getStep";
 import { Slot, useGlobalSearchParams } from "expo-router";
 import React, { useRef, useState } from "react";
 import {
@@ -20,7 +20,7 @@ import Animated, {
 
 type SearchParams = {
   category: string;
-  level: string;
+  step: string;
 };
 
 export default function Layout() {
@@ -33,7 +33,7 @@ export default function Layout() {
 
   const level = getLevel(
     parseInt(params.category) as LevelCategoryName,
-    parseInt(params.level)
+    parseInt(params.step)
   );
 
   const { parseColor } = useTheme();
