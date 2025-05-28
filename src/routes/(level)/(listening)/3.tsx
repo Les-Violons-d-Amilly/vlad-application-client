@@ -2,25 +2,56 @@ import React, { useEffect, useState } from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Audio } from "expo-av";
 
-const NOTES = ["do", "re", "mi", "fa", "sol", "la", "si"];
+const NOTES = ["do", "re", "mi"];
 const NOTE_SOUNDS: Record<string, any> = {
   do: require("../../../../assets/sounds/do.wav"),
   re: require("../../../../assets/sounds/re.wav"),
   mi: require("../../../../assets/sounds/mi.wav"),
-  fa: require("../../../../assets/sounds/fa.wav"),
-  sol: require("../../../../assets/sounds/sol.wav"),
-  la: require("../../../../assets/sounds/la.wav"),
-  si: require("../../../../assets/sounds/si.wav"),
 };
 
 export default function NoteRecognitionGame() {
-  const handlePress = async (note: string) => {
-    const { sound } = await Audio.Sound.createAsync(NOTE_SOUNDS[note]);
+  const [targetNote, setTargetNote] = useState<string | null>(null);
+  const [score, setScore] = useState(0);
+  const [testNumbers, setTestNumbers] = useState(10);
+  const playRandomNote = async () => {
+    const random = NOTES[Math.floor(Math.random() * NOTES.length)];
+    setTargetNote(random);
+
+    const { sound } = await Audio.Sound.createAsync(NOTE_SOUNDS[random]);
     await sound.playAsync();
   };
 
+  const replayNote = async () => {
+    if (targetNote) {
+      const { sound } = await Audio.Sound.createAsync(NOTE_SOUNDS[targetNote]);
+      await sound.playAsync();
+    }
+  };
+
+  const handlePress = (note: string) => {
+    if (note === targetNote) {
+      setScore(score + 1);
+    }
+    if (testNumbers <= 1) {
+      alert("Résultat : " + score);
+      return;
+    }
+    setTestNumbers(testNumbers - 1);
+    playRandomNote();
+  };
+
+  useEffect(() => {
+    playRandomNote();
+  }, []);
+
   return (
     <View style={styles.container}>
+      <Text style={styles.score}>Score : {score}</Text>
+      <View style={styles.button}>
+        <Pressable onPress={replayNote}>
+          <Text style={styles.buttonText}>réécouter</Text>
+        </Pressable>
+      </View>
       <View style={styles.buttons}>
         {NOTES.map((note) => (
           <Pressable

@@ -165,7 +165,16 @@ export class Category {
 
 const Levels: Category[] = [
   new Category(LevelCategoryName.Listening, "#6c24f2")
-    .addCourse("Cassoulet")
+    .addLevel({
+      title: "Découverte des notes",
+      description: "découverte des notes do, ré, mi, fa, sol, la, si",
+      rules: "Touchez la note qui correspond à la note jouée.",
+    })
+    .addLevel({
+      title: "Reconnaissance des notes",
+      description: "Reconnaissance des notes do, ré",
+      rules: "Touchez la note qui correspond à la note jouée.",
+    })
     .addLevel({
       title: "Reconnaissance des notes",
       description: "Reconnaissance des notes do, ré, mi",
@@ -173,7 +182,22 @@ const Levels: Category[] = [
     })
     .addLevel({
       title: "Reconnaissance des notes",
-      description: "Reconnaissance des notes sur la portée",
+      description: "Reconnaissance des notes fa, sol",
+      rules: "Touchez la note qui correspond à la note jouée.",
+    })
+    .addLevel({
+      title: "Reconnaissance des notes",
+      description: "Reconnaissance des notes fa, sol, la",
+      rules: "Touchez la note qui correspond à la note jouée.",
+    })
+    .addLevel({
+      title: "Reconnaissance des notes",
+      description: "Reconnaissance des notes mi, la",
+      rules: "Touchez la note qui correspond à la note jouée.",
+    })
+    .addLevel({
+      title: "Reconnaissance des notes",
+      description: "Reconnaissance des notes mi, la et si",
       rules: "Touchez la note qui correspond à la note jouée.",
     }),
   new Category(LevelCategoryName.Reading, "#f22447").addLevel({

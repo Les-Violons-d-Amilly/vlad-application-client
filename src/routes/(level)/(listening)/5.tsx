@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Audio } from "expo-av";
 
-const NOTES = ["do", "re"];
+const NOTES = ["fa", "sol", "la"];
 const NOTE_SOUNDS: Record<string, any> = {
-  do: require("../../../../assets/sounds/do.wav"),
-  re: require("../../../../assets/sounds/re.wav"),
+  fa: require("../../../../assets/sounds/fa.wav"),
+  sol: require("../../../../assets/sounds/sol.wav"),
+  la: require("../../../../assets/sounds/la.wav"),
 };
 
 export default function NoteRecognitionGame() {
