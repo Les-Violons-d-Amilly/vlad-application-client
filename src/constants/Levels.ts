@@ -170,7 +170,16 @@ const Levels: Category[] = [
       // prettier-ignore
       0.5 + i / 2.1 + i / 3.05 + i / 4.2 + i / 4.6 + i / 7 + i / 11 + i / 13.2 + i / 17
   )
-    .addCourse("Cassoulet")
+    .addLevel({
+      title: "Découverte des notes",
+      description: "découverte des notes",
+      rules: "Touchez une note pour entendre son son correspondant.",
+    })
+    .addLevel({
+      title: "Reconnaissance des notes",
+      description: "Reconnaissance des notes do, ré",
+      rules: "Touchez la note qui correspond à la note jouée.",
+    })
     .addLevel({
       title: "Reconnaissance des notes",
       description: "Reconnaissance des notes do, ré, mi",
