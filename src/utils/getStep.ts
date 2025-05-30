@@ -4,7 +4,6 @@ export function getLevel(
   category: LevelCategoryName,
   levelNum: number
 ): Level | null {
-  console.log("Connard 1 :", category, "; Connard 2 :", levelNum);
   if (isNaN(category) || isNaN(levelNum)) {
     return null;
   }

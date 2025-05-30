@@ -2,6 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import useTheme from "@/src/hooks/useTheme";
 import { Audio } from "expo-av";
+import {
+  GestureHandlerRootView,
+  TapGestureHandler,
+} from "react-native-gesture-handler";
 
 function gcd(a: number, b: number) {
   for (let temp = b; b !== 0; ) {
@@ -60,10 +64,6 @@ export default function () {
     ]);
   };
 
-  const drumClickHandler = (key: number) => {
-    DRUMS[key].clicked = true;
-  };
-
   const scoreHandler = (i: number) => {
     if (DRUMS[i].on) {
       if (DRUMS[(i + 1) % 2].on) {
@@ -71,20 +71,23 @@ export default function () {
           correct++;
           DRUMS[i].clicked = false;
           DRUMS[(i + 1) % 2].clicked = false;
-          setInformation("Perfect !");
+          setInformation("Parfait !");
         } else {
           miss++;
           setInformation("Raté !");
         }
+        DRUMS[i].on = false;
+        DRUMS[(i + 1) % 2].on = false;
       } else {
         if (DRUMS[i].clicked) {
           correct++;
           DRUMS[i].clicked = false;
-          setInformation("Perfect !");
+          setInformation("Parfait !");
         } else {
           miss++;
           setInformation("Raté !");
         }
+        DRUMS[i].on = false;
       }
     } else {
       if (DRUMS[i].clicked) {
@@ -110,7 +113,7 @@ export default function () {
 
         interval = setInterval(() => {
           //Level duration
-          if (beat >= LEVEL_DURATION + 3) {
+          if (beat >= LEVEL_DURATION + 4) {
             setInformation("Terminé !");
             clearInterval(interval);
             return;
@@ -162,25 +165,31 @@ export default function () {
 
   return (
     <React.Fragment>
-      <View style={styles.pageContent}>
+      <GestureHandlerRootView style={styles.pageContent}>
+        <View>
+          <Text>erreurs : {miss}</Text>
+          <Text>correct : {correct}</Text>
+        </View>
         <View style={styles.informationView}>
           <Text style={styles.information}>{information}</Text>
         </View>
         <View style={styles.rythmButtonRow}>
-          <Pressable
-            style={[styles.rythmButton, { backgroundColor: bgc[0] }]}
-            onPress={() => drumClickHandler(0)}
-          >
-            <Text style={styles.rythmButtonText}>{bps[0]}</Text>
-          </Pressable>
-          <Pressable
-            style={[styles.rythmButton, { backgroundColor: bgc[1] }]}
-            onPress={() => drumClickHandler(1)}
-          >
-            <Text style={styles.rythmButtonText}>{bps[1]}</Text>
-          </Pressable>
+          <TapGestureHandler onBegan={() => (DRUMS[0].clicked = true)}>
+            <Pressable
+              style={[styles.rythmButton, { backgroundColor: bgc[0] }]}
+            >
+              <Text style={styles.rythmButtonText}>{bps[0]}</Text>
+            </Pressable>
+          </TapGestureHandler>
+          <TapGestureHandler onBegan={() => (DRUMS[1].clicked = true)}>
+            <Pressable
+              style={[styles.rythmButton, { backgroundColor: bgc[1] }]}
+            >
+              <Text style={styles.rythmButtonText}>{bps[1]}</Text>
+            </Pressable>
+          </TapGestureHandler>
         </View>
-      </View>
+      </GestureHandlerRootView>
     </React.Fragment>
   );
 }
@@ -190,7 +199,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    gap: 20,
+    gap: 40,
   },
   informationView: {
     width: "100%",
