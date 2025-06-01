@@ -228,11 +228,43 @@ const Levels: Category[] = [
     (i: number) =>
       // prettier-ignore
       0.8 + i / 2 + i / 3.05 + i / 4.23 + i / 4.6 + i / 7 + i / 11 + i / 13.2 + i / 17
-  ).addLevel({
-    title: "Polyrythme",
-    description: "Deux cercles de rythme à jouer en même temps",
-    rules: "Jouez les deux cercles de rythme en même temps.",
-  }),
+  )
+    .addLevel({
+      title: "Polyrythme",
+      description: "Deux cercles de rythme à jouer en même temps (Tempo 1 - 1)",
+      rules: "Jouez les deux cercles de rythme en même temps.",
+    })
+    .addLevel({
+      title: "Polyrythme",
+      description: "Deux cercles de rythme à jouer en même temps (Tempo 1 - 2)",
+      rules: "Jouez les deux cercles de rythme en même temps.",
+    })
+    .addLevel({
+      title: "Polyrythme",
+      description: "Deux cercles de rythme à jouer en même temps (Tempo 2 - 1)",
+      rules: "Jouez les deux cercles de rythme en même temps.",
+    })
+    .addLevel({
+      title: "Polyrythme",
+      description: "Deux cercles de rythme à jouer en même temps (Tempo 2 - 2)",
+      rules: "Jouez les deux cercles de rythme en même temps.",
+    })
+    .addLevel({
+      title: "Polyrythme",
+      description: "Deux cercles de rythme à jouer en même temps (Tempo 1 - 3)",
+      rules: "Jouez les deux cercles de rythme en même temps.",
+    })
+    .addLevel({
+      title: "Polyrythme",
+      description: "Deux cercles de rythme à jouer en même temps (Tempo 3 - 1)",
+      rules: "Jouez les deux cercles de rythme en même temps.",
+    })
+    .addLevel({
+      title: "Polyrythme",
+      description: "Deux cercles de rythme à jouer en même temps (Tempo 3 - 2)",
+      rules: "Jouez les deux cercles de rythme en même temps.",
+    }),
+
   new Category(
     LevelCategoryName.Theory,
     "Théorie",

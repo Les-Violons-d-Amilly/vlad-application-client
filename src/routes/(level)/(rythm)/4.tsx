@@ -37,7 +37,7 @@ const DRUMS: Drum[] = new Array(2)
   .map(() => ({ correct: 0, missed: 0, on: false, clicked: false }));
 
 // props
-const bps = [1, 1];
+const bps = [2, 2];
 const LEVEL_DURATION = 30;
 
 const BEAT_DURATION = 5;
